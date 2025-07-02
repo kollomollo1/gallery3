@@ -449,10 +449,14 @@ function handleUpload(files) {
 fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
+    alert("تم جلب الصور من Firebase!");
+    console.log("صور جلبت من Firebase:", data);
+
     images = Object.values(data || {});
     renderChunk();
     updateCounter();
   });
+
 
 
     let currentLightboxIndex = 0;
