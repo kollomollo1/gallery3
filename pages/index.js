@@ -314,12 +314,14 @@ function handleUpload(files) {
       body: formData
     })
     .then(response => response.json())
-    .then(data => {
-      const newImg = {
-        id: Date.now() + Math.random(),
-        src: data.secure_url,
-        category: selectedCategory,
-        group: groupId
+.then(data => {
+  console.log("تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
+
+  const newImg = {
+    id: Date.now() + Math.random(),
+    src: data.secure_url,
+    category: selectedCategory,
+    group: groupId
       };
 
       // حفظ بيانات الصورة في Firebase
