@@ -297,7 +297,11 @@ const HomePage = () => {
 
     
 function handleUpload(files) {
+  console.log("📥 تم استدعاء handleUpload بعد اختيار الملفات");
+
   const selectedCategory = categorySelect.value;
+  console.log("📂 التصنيف المختار هو:", selectedCategory);
+
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
 
   let loaded = 0;
