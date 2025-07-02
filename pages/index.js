@@ -301,25 +301,27 @@ function handleUpload(files) {
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
 
   let loaded = 0;
-  const groupId = Date.now();
+const groupId = Date.now();
 
-  Array.from(files).forEach(file => {
+Array.from(files).forEach(file => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "lastlast");
+
+  // ✅ بدأ رفع الصورة
+  console.log("📤 بدأ رفع الصورة إلى Cloudinary...");
 
   fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
     method: "POST",
     body: formData
   })
   .then(response => {
-    if (!response.ok) {
-      throw new Error("فشل رفع الصورة إلى Cloudinary. الكود: " + response.status);
-    }
     return response.json();
   })
   .then(data => {
-    console.log("تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
+    // ✅ الصورة اترفعت
+    console.log("✅ تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
+    console.log("📂 category:", selectedCategory, "| group:", groupId);
 
     const newImg = {
       id: Date.now() + Math.random(),
@@ -327,13 +329,17 @@ function handleUpload(files) {
       category: selectedCategory,
       group: groupId
     };
+
+    // ✅ قبل الإرسال إلى Firebase
     console.log("📸 سيتم إرسال هذا إلى Firebase:", newImg);
+
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newImg)
     })
     .then(() => {
+      // ✅ تم الحفظ بنجاح
       console.log("🔥 حُفظت الصورة في Firebase:", newImg);
       images.unshift(newImg);
       galleryEl.innerHTML = "";
@@ -342,15 +348,16 @@ function handleUpload(files) {
       updateCounter();
     })
     .catch(err => {
-      console.error("فشل في حفظ بيانات الصورة في Firebase:", err);
+      console.error("❌ فشل في حفظ بيانات الصورة في Firebase:", err);
       alert("فشل في حفظ بيانات الصورة في Firebase");
     });
   })
   .catch(error => {
-    console.error("خطأ أثناء رفع الصورة إلى Cloudinary:", error);
+    console.error("🚫 خطأ أثناء رفع الصورة إلى Cloudinary:", error);
     alert("فشل رفع الصورة إلى Cloudinary: " + error.message);
   });
 });
+
 
 
 function confirmClearGallery() {
