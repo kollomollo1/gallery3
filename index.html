@@ -313,6 +313,31 @@ Array.from(files).forEach(file => {
     return response.json();
   })
   .then(data => {
+
+    const newImg = {
+      id: Date.now() + Math.random(),
+      src: data.secure_url,
+      category: selectedCategory,
+      group: groupId
+    };
+
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newImg)
+    })
+    .then(() => {
+      console.log("🔥 تم حفظ الصورة في Firebase:", newImg);
+      images.unshift(newImg);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("فشل حفظ بيانات الصورة:", err);
+    });
+
     // ✅ الصورة اترفعت
     console.log("✅ تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
     console.log("📂 category:", selectedCategory, "| group:", groupId);
@@ -386,20 +411,22 @@ function confirmClearGallery() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function askAdmin() {
-      const user = prompt("اسم المستخدم:");
-      const pass = prompt("كلمة السر:");
-      if (user === "2330498Aa" && pass === "2330498Aa") {
-        document.getElementById("adminPanel").style.display = "flex";
-        isAdmin = true;
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      } else {
-        alert("بيانات الدخول غير صحيحة");
-      }
-    }
+    
+window.askAdmin = function () {
+  const user = prompt("اسم المستخدم:");
+  const pass = prompt("كلمة السر:");
+  if (user === "2330498Aa" && pass === "2330498Aa") {
+    document.getElementById("adminPanel").style.display = "flex";
+    isAdmin = true;
+    galleryEl.innerHTML = "";
+    page = 1;
+    renderChunk();
+    updateCounter();
+  } else {
+    alert("بيانات الدخول غير صحيحة");
+  }
+};
+
 
     document.getElementById("fileInput").addEventListener("change", e => handleUpload(e.target.files));
     categoryFilter.addEventListener("change", () => {
@@ -434,6 +461,26 @@ function confirmClearGallery() {
 fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json")
   .then(res => res.json())
   .then(data => {
+    alert("تم جلب الصور من Firebase!");
+    console.log("صور جلبت من Firebase:", data);
+
+    images = Object.values(data || {});
+    renderChunk();
+    updateCounter();
+  });
+
+    .then(() => {
+      console.log("🔥 تم حفظ الصورة في Firebase:", newImg);
+      images.unshift(newImg);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("فشل حفظ بيانات الصورة:", err);
+    });
+
     alert("تم جلب الصور من Firebase!");
     console.log("صور جلبت من Firebase:", data);
 
