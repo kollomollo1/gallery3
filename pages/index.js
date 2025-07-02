@@ -32,6 +32,13 @@ const HomePage = () => {
       cursor: pointer;
     }
     .square img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+}
       position: absolute;
       width: 100%;
       height: 100%;
@@ -313,6 +320,32 @@ function handleUpload(files) {
         src: data.secure_url,
         category: selectedCategory,
         group: groupId
+      };
+
+      // حفظ بيانات الصورة في Firebase
+      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newImg)
+      })
+      .then(() => {
+        images.unshift(newImg);
+        galleryEl.innerHTML = "";
+        page = 1;
+        renderChunk();
+        updateCounter();
+      })
+      .catch(err => {
+        console.error("فشل حفظ الصورة في Firebase:", err);
+        alert("فشل في حفظ بيانات الصورة في Firebase");
+      });
+    })
+    .catch(err => {
+      console.error("فشل رفع الصورة إلى Cloudinary:", err);
+      alert("فشل في رفع الصورة إلى Cloudinary");
+    });
       };
 
       // حفظ بيانات الصورة في Firebase
