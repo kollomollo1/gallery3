@@ -306,7 +306,7 @@ function handleUpload(files) {
   Array.from(files).forEach(file => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "last0");
+  formData.append("upload_preset", "lastlast");
 
   fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
     method: "POST",
@@ -334,6 +334,7 @@ function handleUpload(files) {
       body: JSON.stringify(newImg)
     })
     .then(() => {
+      console.log("🔥 حُفظت الصورة في Firebase:", newImg);
       images.unshift(newImg);
       galleryEl.innerHTML = "";
       page = 1;
