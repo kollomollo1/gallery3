@@ -327,7 +327,7 @@ function handleUpload(files) {
       category: selectedCategory,
       group: groupId
     };
-
+    console.log("📸 سيتم إرسال هذا إلى Firebase:", newImg);
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
