@@ -304,45 +304,56 @@ function handleUpload(files) {
   const groupId = Date.now();
 
   Array.from(files).forEach(file => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "last0");
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "last0");
 
-    fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+  fetch("https://api.cloudinary.com/v1_1/dugzs3qbh/image/upload", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("فشل رفع الصورة إلى Cloudinary. الكود: " + response.status);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
+
+    const newImg = {
+      id: Date.now() + Math.random(),
+      src: data.secure_url,
+      category: selectedCategory,
+      group: groupId
+    };
+
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "POST",
-      body: formData
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newImg)
     })
-    .then(response => response.json())
-.then(data => {
-  console.log("تم رفع الصورة إلى Cloudinary، الرابط:", data.secure_url);
+    .then(() => {
+      images.unshift(newImg);
+      galleryEl.innerHTML = "";
+      page = 1;
+      renderChunk();
+      updateCounter();
+    })
+    .catch(err => {
+      console.error("فشل في حفظ بيانات الصورة في Firebase:", err);
+      alert("فشل في حفظ بيانات الصورة في Firebase");
+    });
+  })
+  .catch(error => {
+    console.error("خطأ أثناء رفع الصورة إلى Cloudinary:", error);
+    alert("فشل رفع الصورة إلى Cloudinary: " + error.message);
+  });
+});
 
-  const newImg = {
-    id: Date.now() + Math.random(),
-    src: data.secure_url,
-    category: selectedCategory,
-    group: groupId
-      };
 
-      // حفظ بيانات الصورة في Firebase
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newImg)
-      })
-      .then(() => {
-        images.unshift(newImg);
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      })
-      .catch(err => {
-        alert("فشل في حفظ بيانات الصورة في Firebase");
-      });
-
-    function confirmClearGallery() {
+function confirmClearGallery() {
   if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-    // حذف الصور من Firebase
     fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
       method: "DELETE"
     })
