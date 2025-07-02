@@ -473,6 +473,10 @@ fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase
     }
   });
 
+document.getElementById("fileInput").addEventListener("change", e => {
+  console.log("📸 تم اختيار صورة");
+  handleUpload(e.target.files);
+});
 
 let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
