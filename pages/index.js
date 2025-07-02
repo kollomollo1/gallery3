@@ -243,7 +243,6 @@ const HomePage = () => {
           delBtn.onclick = e => {
             e.stopPropagation();
             images = images.filter(i => i.id !== img.id);
-            localStorage.setItem("gallery_images", JSON.stringify(images));
             galleryEl.innerHTML = "";
             page = 1;
             renderChunk();
@@ -327,32 +326,6 @@ function handleUpload(files) {
       // حفظ بيانات الصورة في Firebase
       fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newImg)
-      })
-      .then(() => {
-        images.unshift(newImg);
-        galleryEl.innerHTML = "";
-        page = 1;
-        renderChunk();
-        updateCounter();
-      })
-      .catch(err => {
-        console.error("فشل حفظ الصورة في Firebase:", err);
-        alert("فشل في حفظ بيانات الصورة في Firebase");
-      });
-    })
-    .catch(err => {
-      console.error("فشل رفع الصورة إلى Cloudinary:", err);
-      alert("فشل في رفع الصورة إلى Cloudinary");
-    });
-      };
-
-      // حفظ بيانات الصورة في Firebase
-      fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
-        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newImg)
       })
@@ -366,31 +339,30 @@ function handleUpload(files) {
       .catch(err => {
         alert("فشل في حفظ بيانات الصورة في Firebase");
       });
-    })
-    .catch(err => {
-      alert("فشل في رفع الصورة إلى Cloudinary");
-    });
-  });
-}
-
-        };
-        reader.readAsDataURL(file);
-      });
-    }
 
     function confirmClearGallery() {
-      if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
-        localStorage.removeItem("gallery_images");
-        images = [];
-        galleryEl.innerHTML = "";
-        page = 1;
-        updateCounter();
-      }
-    }
+  if (confirm("هل أنت متأكد أنك تريد حذف جميع الصور؟")) {
+    // حذف الصور من Firebase
+    fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase.app/images.json", {
+      method: "DELETE"
+    })
+    .then(() => {
+      images = [];
+      galleryEl.innerHTML = "";
+      page = 1;
+      updateCounter();
+      alert("تم حذف جميع الصور من Firebase.");
+    })
+    .catch(err => {
+      console.error("فشل في حذف الصور من Firebase:", err);
+      alert("حدث خطأ أثناء حذف الصور من Firebase.");
+    });
+  }
+}
+
 
     function shuffleGallery() {
       images = images.sort(() => Math.random() - 0.5);
-      localStorage.setItem("gallery_images", JSON.stringify(images));
       galleryEl.innerHTML = "";
       page = 1;
       renderChunk();
