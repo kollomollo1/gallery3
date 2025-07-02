@@ -1,8 +1,3 @@
-
-import React from 'react';
-
-const HomePage = () => {
-  return (
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -296,11 +291,7 @@ const HomePage = () => {
 
     
 function handleUpload(files) {
-  console.log("📥 تم استدعاء handleUpload بعد اختيار الملفات");
-
   const selectedCategory = categorySelect.value;
-  console.log("📂 التصنيف المختار هو:", selectedCategory);
-
   if (!selectedCategory) return alert("اختر تصنيفًا أولاً");
 
   let loaded = 0;
@@ -472,10 +463,6 @@ fetch("https://gallery3modifiedjsless-default-rtdb.europe-west1.firebasedatabase
     }
   });
 
-document.getElementById("fileInput").addEventListener("change", e => {
-  console.log("📸 تم اختيار صورة");
-  handleUpload(e.target.files);
-});
 
 let lightboxImg = document.getElementById('lightbox-img');
 let scale = 1;
@@ -564,4 +551,3 @@ window.history.pushState({}, "");
 </script>
 </body>
 </html>
-

@@ -1,9 +1,0 @@
-node_modules
-.next
-.env
-.DS_Store
-node_modules/
-.env
-.next/
-.DS_Store
-npm-debug.log
